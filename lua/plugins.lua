@@ -56,6 +56,12 @@ return {
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 			local lsp_config = require("lspconfig")
 
+            lsp_config.bashls.setup({capabilities = capabilities})
+            lsp_config.clangd.setup({
+                capabilities = capabilities,
+                cmd = {"clangd"},
+            })
+
 			lsp_config.lua_ls.setup({
 				capabilities = capabilities,
 				on_init = function(client)
@@ -243,6 +249,18 @@ return {
 		end,
 	},
 	{ "rafamadriz/friendly-snippets" },
+    {
+        'rmagatti/auto-session',
+        config = function(plugin, opts)
+            require("auto-session").setup(opts)
+        end,
+        lazy = false,
+        -- event = "VeryLazy",
+        opts = {
+            log_level = "error",
+            auto_session_suppress_dirs = { "~/", "~/Projects", "~/Downloads", "/"},
+        },
+    },
 	{ "saadparwaiz1/cmp_luasnip" },
 	{
 		"windwp/nvim-autopairs",

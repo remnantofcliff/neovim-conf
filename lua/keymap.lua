@@ -43,7 +43,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 vim.cmd("tnoremap <Esc> <C-\\><C-n>")
-vim.keymap.set("n", "<leader><leader>",
-    function() require("FTerm").toggle() end
-)
+vim.keymap.set("n", "<leader><leader>", function()
+	require("FTerm").toggle()
+end)
 
+vim.keymap.set("n", "<F4>", function()
+    vim.cmd("ClangdSwitchSourceHeader")
+end)
