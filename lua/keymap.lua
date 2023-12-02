@@ -6,7 +6,6 @@ vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
 
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
-vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
@@ -36,7 +35,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 		vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
 		vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-		vim.keymap.set("n", "<leader>f", function()
+		vim.keymap.set("n", "<leader>F", function()
 			vim.lsp.buf.format({ async = true })
 		end, opts)
 	end,
@@ -48,5 +47,11 @@ vim.keymap.set("n", "<leader><leader>", function()
 end)
 
 vim.keymap.set("n", "<F4>", function()
-    vim.cmd("ClangdSwitchSourceHeader")
+	vim.cmd("ClangdSwitchSourceHeader")
 end)
+
+-- vim.keymap.set("n", "<leader>F", function()
+-- 	require("formatter")
+--
+-- 	vim.cmd("FormatLock")
+-- end)

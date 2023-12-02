@@ -56,11 +56,27 @@ return {
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 			local lsp_config = require("lspconfig")
 
-            lsp_config.bashls.setup({capabilities = capabilities})
-            lsp_config.clangd.setup({
-                capabilities = capabilities,
-                cmd = {"clangd"},
-            })
+			lsp_config.bashls.setup({ capabilities = capabilities })
+			lsp_config.clangd.setup({
+				capabilities = capabilities,
+				cmd = { "clangd" },
+			})
+			lsp_config.rust_analyzer.setup({
+				capabilities = capabilities,
+				settings = {
+					cargo = {
+						buildScripts = {
+							enable = true,
+						},
+					},
+                    check = {
+                        command = "clippy",
+                    },
+					procMacro = {
+						enable = true,
+					},
+				},
+			})
 
 			lsp_config.lua_ls.setup({
 				capabilities = capabilities,
@@ -173,7 +189,6 @@ return {
 	},
 	{
 		"mhartington/formatter.nvim",
-		event = "VeryLazy",
 		config = function()
 			local util = require("formatter.util")
 
@@ -201,7 +216,6 @@ return {
 				},
 			})
 		end,
-		lazy = false,
 	},
 	{
 		"neovim/nvim-lspconfig",
@@ -211,10 +225,10 @@ return {
 		opts = {},
 		event = "VeryLazy",
 	},
-    {
-        "numToStr/FTerm.nvim",
-        event = "VeryLazy",
-    },
+	{
+		"numToStr/FTerm.nvim",
+		event = "VeryLazy",
+	},
 	{
 		"nvim-lua/plenary.nvim",
 	},
@@ -249,18 +263,18 @@ return {
 		end,
 	},
 	{ "rafamadriz/friendly-snippets" },
-    {
-        'rmagatti/auto-session',
-        config = function(plugin, opts)
-            require("auto-session").setup(opts)
-        end,
-        lazy = false,
-        -- event = "VeryLazy",
-        opts = {
-            log_level = "error",
-            auto_session_suppress_dirs = { "~/", "~/Projects", "~/Downloads", "/"},
-        },
-    },
+	{
+		"rmagatti/auto-session",
+		config = function(plugin, opts)
+			require("auto-session").setup(opts)
+		end,
+		lazy = false,
+		-- event = "VeryLazy",
+		opts = {
+			log_level = "error",
+			auto_session_suppress_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
+		},
+	},
 	{ "saadparwaiz1/cmp_luasnip" },
 	{
 		"windwp/nvim-autopairs",
