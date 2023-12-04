@@ -15,12 +15,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
-  -- Detect tabstop and shiftwidth automatically
-  {
-    'tpope/vim-sleuth',
-    event = "VeryLazy",
-  },
-
   {
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -34,7 +28,6 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
-
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -48,7 +41,6 @@ require('lazy').setup({
       'rafamadriz/friendly-snippets',
     },
   },
-
   {
     'folke/which-key.nvim',
     event = "VeryLazy",
@@ -56,7 +48,6 @@ require('lazy').setup({
   },
 
   {
-    -- Theme inspired by Atom
     'olimorris/onedarkpro.nvim',
     priority = 1000,
     config = function(plugin, opts)
@@ -72,23 +63,25 @@ require('lazy').setup({
       highlights = {
         -- help treesitter-highlight-groups
         Comment = { italic = true },
+        PMenuSel = { bg = "#004040" },
       },
     },
   },
 
-  -- {
-  --   -- Set lualine as statusline
-  --   'nvim-lualine/lualine.nvim',
-  --   -- See `:help lualine.txt`
-  --   opts = {
-  --     options = {
-  --       icons_enabled = false,
-  --       theme = 'onedark_dark',
-  --       component_separators = '|',
-  --       section_separators = '',
-  --     },
-  --   },
-  -- },
+  {
+    -- Set lualine as statusline
+    'nvim-lualine/lualine.nvim',
+    -- See `:help lualine.txt`
+    lazy = false,
+    opts = {
+      options = {
+        icons_enabled = false,
+        --   theme = 'onedark_dark',
+        component_separators = '|',
+        --   section_separators = '',
+      },
+    },
+  },
 
   {
     -- Add indentation guides even on blank lines
@@ -97,7 +90,11 @@ require('lazy').setup({
     -- See `:help ibl`
     event = "VeryLazy",
     main = 'ibl',
-    opts = {},
+    opts = {
+      scope = {
+        show_start = false,
+      },
+    },
   },
 
   {
@@ -141,10 +138,27 @@ require('lazy').setup({
       require("auto-session").setup(opts)
     end,
     lazy = false,
-    -- event = "VeryLazy",
     opts = {
       log_level = "error",
-      auto_session_suppress_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
+      auto_session_suppress_dirs = { "~/Projects", "~/Downloads", "/" },
+    },
+  },
+  {
+    'nmac427/guess-indent.nvim',
+    event = "VeryLazy",
+    opts = {},
+  },
+  {
+    'windwp/nvim-autopairs',
+    event = "InsertEnter",
+    opts = {} -- this is equalent to setup({}) function
+  },
+  {
+    "kylechui/nvim-surround",
+    version = "*",
+    event = "VeryLazy",
+    opts = {
+
     },
   },
 }, {
@@ -190,7 +204,7 @@ vim.o.updatetime = 250
 vim.o.timeoutlen = 300
 
 -- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+vim.o.completeopt = 'menu,menuone,preview,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
@@ -207,6 +221,9 @@ vim.o.splitkeep = "topline"
 vim.o.virtualedit = "block"          -- Allow cursor to move where there is no text in visual block mode
 vim.o.wildmode = "longest:full,full" -- Command-line completion mode
 vim.o.wrap = false                   -- Disable line wrap
+vim.o.shiftwidth = 2
+vim.o.tabstop = 2
+vim.o.expandtab = true
 
 
 -- [[ Basic Keymaps ]]
@@ -232,7 +249,6 @@ vim.cmd("tnoremap <Esc> <C-\\><C-n>")
 
 -- Switch header/source
 vim.keymap.set("n", "<F4>", function() vim.cmd("ClangdSwitchSourceHeader") end)
-
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -316,7 +332,32 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'bash', 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim' },
+    ensure_installed = {
+      'bash',
+      'c',
+      'cpp',
+      'css',
+      'glsl',
+      'go',
+      'html',
+      'ini',
+      'java',
+      'javascript',
+      'json',
+      'lua',
+      'markdown',
+      'markdown_inline',
+      'python',
+      'rust',
+      'tsx',
+      'toml',
+      'typescript',
+      'vimdoc',
+      'vim',
+      'xml',
+      'wgsl',
+      'yaml',
+    },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -490,15 +531,12 @@ require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
 cmp.setup {
-  snippet = {
-    expand = function(args)
-      luasnip.lsp_expand(args.body)
-    end,
-  },
   completion = {
-    completeopt = 'menu,menuone,noinsert'
+    completeopt = 'menu,menuone,noinsert, preview',
+    keyword_length = 1,
   },
   mapping = cmp.mapping.preset.insert {
+    ['<Esc>'] = cmp.mapping.close(),
     ['<C-n>'] = cmp.mapping.select_next_item(),
     ['<C-p>'] = cmp.mapping.select_prev_item(),
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
@@ -506,32 +544,47 @@ cmp.setup {
     ['<C-Space>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
+      select = false,
     },
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_locally_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.locally_jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
+    -- ['<Tab>'] = cmp.mapping(function(fallback)
+    --   if cmp.visible() then
+    --     cmp.select_next_item()
+    --   elseif luasnip.expand_or_locally_jumpable() then
+    --     luasnip.expand_or_jump()
+    --   else
+    --     fallback()
+    --   end
+    -- end, { 'i', 's' }),
+    -- ['<S-Tab>'] = cmp.mapping(function(fallback)
+    --   if cmp.visible() then
+    --     cmp.select_prev_item()
+    --   elseif luasnip.locally_jumpable(-1) then
+    --     luasnip.jump(-1)
+    --   else
+    --     fallback()
+    --   end
+    -- end, { 'i', 's' }),
+  },
+  preselect = 'None',
+  snippet = {
+    expand = function(args)
+      luasnip.lsp_expand(args.body)
+    end,
   },
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
     { name = "cmp-buffer" },
     { name = "cmp-path" },
+  },
+  window = {
+    completion = {
+      border = "rounded",
+      scrolloff = 4,
+    },
+    documentation = {
+      border = "rounded",
+    },
   },
 }
 
