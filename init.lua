@@ -64,6 +64,7 @@ require('lazy').setup({
         -- help treesitter-highlight-groups
         Comment = { italic = true },
         PMenuSel = { bg = "#004040" },
+        Visual = { bg = "#4F4F4F" },
       },
     },
   },
@@ -605,7 +606,7 @@ luasnip.config.setup {}
 
 cmp.setup {
   completion = {
-    completeopt = 'menu,menuone,noinsert, preview',
+    completeopt = 'menu,menuone,noinsert,preview',
     keyword_length = 1,
   },
   mapping = cmp.mapping.preset.insert {
@@ -613,7 +614,7 @@ cmp.setup {
     ['<C-n>'] = cmp.mapping.select_next_item(),
     ['<C-p>'] = cmp.mapping.select_prev_item(),
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-u>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
