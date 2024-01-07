@@ -73,11 +73,13 @@ require('lazy').setup({
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
-    lazy = false,
+    dependencies = {
+      'olimorris/onedarkpro.nvim',
+    },
     opts = {
       options = {
         icons_enabled = false,
-        --   theme = 'onedark_dark',
+        theme = 'onedark_dark',
         component_separators = '|',
         --   section_separators = '',
       },
@@ -171,8 +173,6 @@ require('lazy').setup({
       local dapui = require 'dapui'
 
       require('mason-nvim-dap').setup {
-        -- Makes a best effort to setup the various debuggers with
-        -- reasonable debug configurations
         automatic_setup = true,
 
         -- You can provide additional configuration to the handlers,
@@ -220,9 +220,6 @@ require('lazy').setup({
       dap.listeners.after.event_initialized['dapui_config'] = dapui.open
       dap.listeners.before.event_terminated['dapui_config'] = dapui.close
       dap.listeners.before.event_exited['dapui_config'] = dapui.close
-
-      -- Install golang specific config
-      -- require('dap-go').setup()
     end,
   }
 }, {
@@ -264,8 +261,8 @@ vim.o.smartcase = true
 vim.wo.signcolumn = 'yes'
 
 -- Decrease update time
-vim.o.updatetime = 250
-vim.o.timeoutlen = 300
+vim.o.updatetime = 500
+vim.o.timeoutlen = 50
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menu,menuone,preview,noselect'
@@ -534,11 +531,10 @@ require('mason-lspconfig').setup()
 local servers = {
   clangd = {
     arguments = {
-      "-header-insertion=never",
+      "--header-insertion=never",
+      "--function-arg-placeholders=0",
     },
   },
-  -- gopls = {},
-  -- pyright = {},
   rust_analyzer = {
     ["rust-analyzer"] = {
       cargo = {
@@ -601,29 +597,8 @@ require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
 
-local format = function(_, item)
-  local ELLIPSIS_CHAR = '…'
-  local MAX_LABEL_WIDTH = 25
-  local MAX_KIND_WIDTH = 14
-
-  local get_ws = function(max, len)
-    return (" "):rep(max - len)
-  end
-
-  local content = item.abbr
-
-  if #content > MAX_LABEL_WIDTH then
-    item.abbr = vim.fn.strcharpart(content, 0, MAX_LABEL_WIDTH) .. ELLIPSIS_CHAR
-  else
-    item.abbr = content .. get_ws(MAX_LABEL_WIDTH, #content)
-  end
-
-  return item
-end
-
 cmp.setup {
   completion = {
-    completeopt = 'menu,menuone,noinsert,preview',
     keyword_length = 1,
   },
   formatting = {
@@ -641,7 +616,7 @@ cmp.setup {
       item.menu = menu_icon[entry.source.name]
 
       -- Set the fixed width of the completion menu to 60 characters.
-      -- fixed_width = 20
+      local fixed_width = 70
 
       -- Set 'fixed_width' to false if not provided.
       fixed_width = fixed_width or false
@@ -682,26 +657,8 @@ cmp.setup {
       behavior = cmp.ConfirmBehavior.Replace,
       select = false,
     },
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_locally_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.locally_jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
   },
-  preselect = 'None',
+  preselect = cmp.PreselectMode.None,
   snippet = {
     expand = function(args)
       luasnip.lsp_expand(args.body)
