@@ -75,13 +75,14 @@ require('lazy').setup({
     -- See `:help lualine.txt`
     dependencies = {
       'olimorris/onedarkpro.nvim',
+      'nvim-tree/nvim-web-devicons',
     },
+    event = "VeryLazy",
     opts = {
       options = {
         icons_enabled = false,
         theme = 'onedark_dark',
         component_separators = '|',
-        --   section_separators = '',
       },
     },
   },
