@@ -536,6 +536,7 @@ local servers = {
       "--function-arg-placeholders=0",
     },
   },
+  wgsl_analyzer = {},
   rust_analyzer = {
     ["rust-analyzer"] = {
       cargo = {
@@ -565,6 +566,7 @@ local servers = {
       diagnostics = { disable = { 'missing-fields' } },
     },
   },
+  zls = {},
 }
 
 -- Setup neovim lua configuration
@@ -591,6 +593,13 @@ mason_lspconfig.setup_handlers {
     }
   end,
 }
+
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+  pattern = "*.wgsl",
+  callback = function()
+    vim.bo.filetype = "wgsl"
+  end,
+})
 
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
