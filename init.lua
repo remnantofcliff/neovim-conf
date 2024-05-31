@@ -167,6 +167,7 @@ require('lazy').setup({
       'rcarriga/nvim-dap-ui',
       'williamboman/mason.nvim',
       'jay-babu/mason-nvim-dap.nvim',
+      'nvim-neotest/nvim-nio',
     },
     event = "VeryLazy",
     config = function()
@@ -389,6 +390,8 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set('n', '<leader>n', function() vim.cmd('cnext') end, { desc = 'Next quick fix location' })
+vim.keymap.set('n', '<leader>p', function() vim.cmd('cnext') end, { desc = 'Previous quick fix location' })
 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
@@ -534,7 +537,6 @@ local servers = {
       "--function-arg-placeholders=0",
     },
   },
-  wgsl_analyzer = {},
   rust_analyzer = {
     ["rust-analyzer"] = {
       cargo = {
@@ -553,9 +555,6 @@ local servers = {
       },
     },
   },
-  -- tsserver = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
-
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -564,6 +563,7 @@ local servers = {
       diagnostics = { disable = { 'missing-fields' } },
     },
   },
+  wgsl_analyzer = {},
   zls = {},
 }
 
